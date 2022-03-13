@@ -196,7 +196,16 @@ class MultivariateGaussian:
         log_likelihood: float
             log-likelihood calculated
         """
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        def calc_loglikelihood(residuals):
+            return -0.5 * (np.log(det(cov)) + residuals.T.dot(inv(cov)).dot(residuals) + X.shape[1] * np.log(2 * np.pi))
+
+        residuals = (X - mu)
+
+        loglikelihood = np.apply_along_axis(calc_loglikelihood, 1, residuals)
+        loglikelihoodsum = loglikelihood.sum()
+
+        return loglikelihoodsum
 
 def plot_question_2(diff: np.ndarray):
     df_for_plot = pd.DataFrame({"size": np.arange(10,1010,10), "differnce": diff})
@@ -237,9 +246,22 @@ if __name__ == '__main__':
     # abs_dist = np.abs(expected_per_n - 10)
     # plot_question_2(abs_dist)
 
-    #Q3
-    univ_gaussian.fit(rndm_normal)
-    plot_question_3(univ_gaussian.pdf(rndm_normal))
+    # #Q3
+    # univ_gaussian.fit(rndm_normal)
+    # plot_question_3(univ_gaussian.pdf(rndm_normal))
+
+    #Q4
+    mu = np.array([0,0,4,0])
+    cov_mat = np.array([[1,0.2,0,0.5]
+                           ,[0.2,2,0,0]
+                           ,[0,0,1,0]
+                            ,[0.5,0,0,1]])
+    rndm_multi_normal = np.random.multivariate_normal(mu, cov_mat,1000)
+    multinormal = MultivariateGaussian()
+    multinormal.fit(rndm_multi_normal)
+    print(f"the expected vector is {multinormal.mu_} \nthe covariance matrix is \n{multinormal.cov_}")
+
+    #Q5
 
 
 
