@@ -52,7 +52,7 @@ class UnivariateGaussian:
         """
         self.mu_ = X.mean()
         self.var_ = X.var(ddof=int(not self.biased_))
-        raise NotImplementedError()
+        # raise NotImplementedError()
 
         self.fitted_ = True
         return self
@@ -148,7 +148,7 @@ class MultivariateGaussian:
         """
         self.mu_ = X.mean(axis=0)
         self.cov_ = np.cov(np.random.multivariate_normal([1,2],[[1,0],[0,1]],6), rowvar=False)
-        raise NotImplementedError()
+        # raise NotImplementedError()
 
         self.fitted_ = True
         return self
@@ -197,3 +197,12 @@ class MultivariateGaussian:
         raise NotImplementedError()
 
 
+if __name__ == '__main__':
+    # Q1
+    univ_gaussian = UnivariateGaussian()
+    np.random.seed(1)
+    rdm_normal = np.random.normal(10,1,1000)
+    univ_gaussian.fit(rdm_normal)
+    print(f" the expectation and variance are {(univ_gaussian.mu_,univ_gaussian.var_)}")
+
+    #Q2
