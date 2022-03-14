@@ -1,7 +1,5 @@
 from __future__ import annotations
 import numpy as np
-import pandas as pd
-import plotly.express as px
 from numpy.linalg import inv, det, slogdet
 
 
@@ -196,7 +194,6 @@ class MultivariateGaussian:
         log_likelihood: float
             log-likelihood calculated
         """
-        # raise NotImplementedError()
         def calc_loglikelihood(residuals):
             return -0.5 * (np.log(det(cov)) + residuals.T.dot(inv(cov)).dot(residuals) + X.shape[1] * np.log(2 * np.pi))
 
@@ -207,61 +204,10 @@ class MultivariateGaussian:
 
         return loglikelihoodsum
 
-def plot_question_2(diff: np.ndarray):
-    df_for_plot = pd.DataFrame({"size": np.arange(10,1010,10), "differnce": diff})
-    fig = px.line(df_for_plot, x="size", y="differnce",range_x=[0,1030],
-                  title="L1 norm from true expected as function on sample size")
-    fig.update_xaxes(nticks=20)
-    fig.update_traces(line_color="#00ff00")
-    fig.update_xaxes(title_text="size of sample")
-    fig.update_yaxes(title_text="L1 distance from true expected")
-    fig.write_image("/Users/elkysandor/Desktop/plots_iml/plot_Q2.png")
-
-def plot_question_3(pdf_vec):
-    df_for_plot = pd.DataFrame({"x": np.arange(1,1001,1), "pdf": pdf_vec})
-    fig = px.scatter(df_for_plot, x="x", y="pdf",range_x=[0,1005],
-                  title="empirical PDF")
-    fig.update_xaxes(nticks=20)
-    fig.update_traces(line_color="#00ff00")
-    fig.update_xaxes(title_text="rank of sample")
-    fig.update_yaxes(title_text="pdf of sample")
-    fig.write_image("/Users/elkysandor/Desktop/plots_iml/plot_Q3.png")
 
 
-if __name__ == '__main__':
-    # Q1
-    univ_gaussian = UnivariateGaussian()
-    np.random.seed(1)
-    rndm_normal = np.random.normal(10,1,1000)
-    univ_gaussian.fit(rndm_normal)
-    print(f" the expectation and variance are {(univ_gaussian.mu_,univ_gaussian.var_)}")
 
-    # #Q2
-    # np.random.sample()
-    # expected_per_n = np.zeros(np.arange(10,1010,10).shape)
-    # for i,n in enumerate(np.arange(10,1010,10)):
-    #     sample_of_size_n = np.random.choice(rndm_normal,n)
-    #     univ_gaussian.fit(sample_of_size_n)
-    #     expected_per_n[i] = univ_gaussian.mu_
-    # abs_dist = np.abs(expected_per_n - 10)
-    # plot_question_2(abs_dist)
 
-    # #Q3
-    # univ_gaussian.fit(rndm_normal)
-    # plot_question_3(univ_gaussian.pdf(rndm_normal))
-
-    #Q4
-    mu = np.array([0,0,4,0])
-    cov_mat = np.array([[1,0.2,0,0.5]
-                           ,[0.2,2,0,0]
-                           ,[0,0,1,0]
-                            ,[0.5,0,0,1]])
-    rndm_multi_normal = np.random.multivariate_normal(mu, cov_mat,1000)
-    multinormal = MultivariateGaussian()
-    multinormal.fit(rndm_multi_normal)
-    print(f"the expected vector is {multinormal.mu_} \nthe covariance matrix is \n{multinormal.cov_}")
-
-    #Q5
 
 
 
