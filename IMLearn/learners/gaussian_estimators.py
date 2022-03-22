@@ -79,7 +79,6 @@ class UnivariateGaussian:
             raise ValueError("Estimator must first be fitted before calling `pdf` function")
         pdf = lambda x: (1/np.sqrt(2*np.pi*self.var_)) * np.exp((np.power(x-self.mu_, 2))/(-2*self.var_))
         return pdf(X)
-        # raise NotImplementedError()
 
     @staticmethod
     def log_likelihood(mu: float, sigma: float, X: np.ndarray) -> float:
@@ -100,7 +99,8 @@ class UnivariateGaussian:
         log_likelihood: float
             log-likelihood calculated
         """
-        raise NotImplementedError()
+        resid = (X-mu)**2
+        return -0.5*(X.size*np.log(2*np.pi)+X.size*np.log(sigma)+(1/sigma)*resid.sum())
 
 
 class MultivariateGaussian:
@@ -147,7 +147,7 @@ class MultivariateGaussian:
         Then sets `self.fitted_` attribute to `True`
         """
         self.mu_ = X.mean(axis=0)
-        self.cov_ = np.cov(X,rowvar=False,ddof=1)
+        self.cov_ = np.cov(X, ddof=1, rowvar=False)
         self.fitted_ = True
         return self
 
