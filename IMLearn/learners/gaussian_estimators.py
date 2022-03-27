@@ -147,7 +147,7 @@ class MultivariateGaussian:
         Then sets `self.fitted_` attribute to `True`
         """
         self.mu_ = X.mean(axis=0)
-        self.cov_ = np.cov(X, ddof=1, rowvar=False)
+        self.cov_ = np.cov(X, gitddof=1, rowvar=False)
         self.fitted_ = True
         return self
 
