@@ -7,6 +7,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 import plotly.io as pio
+import datetime
+
 pio.templates.default = "simple_white"
 
 
@@ -23,7 +25,18 @@ def load_data(filename: str):
     Design matrix and response vector (prices) - either as a single
     DataFrame or a Tuple[DataFrame, Series]
     """
-    raise NotImplementedError()
+    house = pd.read_csv("/Users/elkysandor/Desktop/hujiyr3/IML/IML.HUJI/datasets/house_prices.csv").dropna().reset_index()
+    zip_dummies = pd.get_dummies(house.zipcode,drop_first=True)
+    house.date = (house.date.str.slice(stop = 8))
+    def to_unix(time_str):
+        if time_str != "0":
+            return datetime.datetime.strptime(time_str, "%Y%m%d").timestamp()
+        return 0
+    house["timestamp"] = house.date.apply(to_unix)
+    house["age"] = 2016-house.yr_built
+    house["last_renovation"] = 2016-house.yr_renovated
+    house.join(zip_dummies)
+
 
 
 def feature_evaluation(X: pd.DataFrame, y: pd.Series, output_path: str = ".") -> NoReturn:
