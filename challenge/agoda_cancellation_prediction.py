@@ -1,5 +1,7 @@
 from challenge.agoda_cancellation_estimator import AgodaCancellationEstimator
 from IMLearn.utils import split_train_test
+from sklearn.linear_model import LinearRegression()
+from sklearn.tree import DecisionTreeClassifier()
 
 import numpy as np
 import pandas as pd
@@ -21,7 +23,11 @@ def load_data(filename: str):
     3) Tuple of ndarray of shape (n_samples, n_features) and ndarray of shape (n_samples,)
     """
     # TODO - replace below code with any desired preprocessing
-    full_data = pd.read_csv(filename).dropna().drop_duplicates()
+    full_data = pd.read_csv(filename).dropna().drop_duplicates().drop(columns="h_booking_id",inplace=True)
+    full_data.drop(columns=["h_booking_id"],axis=1,inplace=True)
+    full_data.cancellation_datetime =full_data.cancellation_datetime.astype(bool).astype(int)
+    binary_data = full_data.columns[full_data.isin([0,1,0.0,1.0,np.nan]).all()]
+
     features = full_data[["h_booking_id",
                           "hotel_id",
                           "accommadation_type_name",
