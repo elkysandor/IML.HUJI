@@ -262,6 +262,25 @@ def fillter_to_binary(val):
     if val in [0,1,1.0,0.0] or np.isnan(val):
         return True
     return False
+
+has_unique = ['charge_option', 'original_payment_type']
+
+bool_cols = ['is_user_logged_in', 'is_first_booking']
+for date_time_col_name in date_time_cols:
+    full_data[date_time_col_name] = pd.to_datetime(full_data[date_time_col_name]).view(np.int64)
+
+for non_numeric_col_name in names_of_non_numeric_cols:
+    full_data[non_numeric_col_name] = full_data[non_numeric_col_name].apply(lambda x: __str_to_numeric(x))
+
+for has_unique_col_name in has_unique:
+    one_hot = pd.get_dummies(full_data[has_unique_col_name])
+    full_data = full_data.drop(has_unique_col_name, axis=1)
+    full_data = full_data.join(one_hot)
+
+for bool_col_name in bool_cols:
+    full_data[bool_col_name] = full_data[bool_col_name].astype(int)
+
+full_data['num_of_booked_days'] = full_data['checkin_date'] - full_data['checkout_date']
 def prase_to_vec(lst):
     vec=np.zeros(2)
     if lst:

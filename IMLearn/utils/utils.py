@@ -1,6 +1,7 @@
 from typing import Tuple
 import numpy as np
 import pandas as pd
+import math
 
 
 def split_train_test(X: pd.DataFrame, y: pd.Series, train_proportion: float = .75) \
@@ -33,7 +34,10 @@ def split_train_test(X: pd.DataFrame, y: pd.Series, train_proportion: float = .7
         Responses of test samples
 
     """
-    raise NotImplementedError()
+    train_size = math.ceil(X.shape[0]*train_proportion)
+    random = np.random.permutation(X.shape[0])
+    return X.iloc[random[:train_size]],y.iloc[random[:train_size]],X.iloc[random[train_size:]],y.iloc[random[train_size:]]
+
 
 
 def confusion_matrix(a: np.ndarray, b: np.ndarray) -> np.ndarray:
