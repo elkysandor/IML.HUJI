@@ -104,7 +104,5 @@ if __name__ == '__main__':
     X,y = load_data("/Users/elkysandor/Desktop/hujiyr3/IML/IML.HUJI/datasets/house_prices.csv")
     feature_evaluation(X,y)
     train_x,train_y,test_x,test_y = split_train_test(X,y)
-    for i in (train_x,train_y,test_x,test_y):
-        print(i.shape)
     qa_4(train_x,train_y,test_x,test_y)
 
