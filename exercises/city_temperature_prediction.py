@@ -21,18 +21,21 @@ def load_data(filename: str) -> pd.DataFrame:
     -------
     Design matrix and response vector (Temp)
     """
-    daily_temp = pd.read_csv(filename,parse_dates={"date":[2]})
+    daily_temp = pd.read_csv(filename,parse_dates={"date": [2]})
     daily_temp["DayOfYear"] = daily_temp.date.dt.day_of_year
+    daily_temp = daily_temp.loc[daily_temp.Temp > -20]
     return daily_temp
 
 def plot_israel(df):
-    israel_data = df.loc[((df.Country == "Israel") & (df.Temp > -20))]
+    df.loc[:,"Year"] = df["Year"].astype("string")
+    israel_data = df.loc[(df.Country == "Israel")]
     fig = px.scatter(israel_data,x = "DayOfYear",y="Temp",color="Year",title="Temp in israel as function of day of year"
                      , labels={'x': 'DayOfYear', 'y':'Temp'})
     fig.write_image("/Users/elkysandor/Desktop/hujiyr3/IML/plots_iml/plot_Q3.2.2a_ex2.png")
 
 def std_by_month(df):
-    tmp_std_by_month = df.groupby("Month").agg(np.std).Temp
+    israel_data = df.loc[(df.Country == "Israel")]
+    tmp_std_by_month = israel_data.groupby("Month").agg(np.std).Temp
     fig = px.bar(tmp_std_by_month,x=tmp_std_by_month.index,y=tmp_std_by_month,
                  title="std temperature by month", labels={'x': 'month', 'y':'std'})
     fig.write_image("/Users/elkysandor/Desktop/hujiyr3/IML/plots_iml/plot_Q3.2.2b_ex2.png")
@@ -54,14 +57,15 @@ def quastion4(df):
         poly_fit.fit(train_x["DayOfYear"],train_y.values)
         loss_per_model.append(round(poly_fit.loss(test_x["DayOfYear"],test_y.values),2))
     loss_per_model = pd.Series(loss_per_model,index=np.arange(1,11,1))
+    print(loss_per_model)
     fig = px.bar(loss_per_model,x=loss_per_model.index,y=loss_per_model,title="loss value by k"
                  , labels={'x': 'poly fitting degree', 'y':'MSE'})
     fig.write_image("/Users/elkysandor/Desktop/hujiyr3/IML/plots_iml/plot_Q3.2.4_ex2.png")
 
 def last_quastion(df):
     loss_per_model = []
-    israel_data = df.loc[((df.Country == "Israel") & (df.Temp > -20))]
-    poly_fit = PolynomialFitting(3)
+    israel_data = df.loc[(df.Country == "Israel")]
+    poly_fit = PolynomialFitting(5)
     poly_fit.fit(israel_data["DayOfYear"],israel_data["Temp"])
     rest_data = df.loc[~(df.Country == "Israel")]
     for country in rest_data.Country.unique():

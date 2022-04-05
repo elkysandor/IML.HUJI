@@ -93,8 +93,8 @@ def qa_4(train_df,train_vec,test_df,test_vec):
     fig = go.Figure([go.Scatter(x=precentage, y=mean_loss["mean"]-2*mean_loss["std"], fill=None, mode="lines", line=dict(color="lightgrey"), showlegend=False),
                go.Scatter(x=precentage, y=mean_loss["mean"]+2*mean_loss["std"], fill='tonexty', mode="lines", line=dict(color="lightgrey"), showlegend=False),
                go.Scatter(x=precentage, y=mean_loss["mean"], mode="markers+lines", marker=dict(color="black",size=1), showlegend=False)],
-              layout=go.Layout(title=f"mean and std as of loss as function of p",
-                               height=300))
+              layout=go.Layout({"title":"mean and std as of loss as function of p",
+                                "yaxis_title": "mean loss","xaxis_title": "percentage of train"}))
     fig.write_image(f"/Users/elkysandor/Desktop/hujiyr3/IML/plots_iml/plot_Q3.1.4_ex2.png")
 
 
