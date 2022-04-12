@@ -129,7 +129,6 @@ class BaseEstimator(ABC):
         responses : ndarray of shape (n_samples, )
             Predicted responses of given samples
         """
-        raise NotImplementedError()
 
     @abstractmethod
     def _loss(self, X: np.ndarray, y: np.ndarray) -> float:
@@ -149,7 +148,6 @@ class BaseEstimator(ABC):
         loss : float
             Performance under loss function specified for estimator
         """
-        raise NotImplementedError()
 
     def fit_predict(self, X: np.ndarray, y: np.ndarray) -> np.ndarray:
         """
@@ -168,5 +166,5 @@ class BaseEstimator(ABC):
         responses : ndarray of shape (n_samples, )
             Predicted responses of given samples
         """
-        self.fit(X, y)
-        return self.predict(X)
+        self._fit(X, y)
+        return self._predict(X)
