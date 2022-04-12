@@ -36,17 +36,25 @@ def run_perceptron():
     Create a line plot that shows the perceptron algorithm's training loss values (y-axis)
     as a function of the training iterations (x-axis).
     """
+    data_dict = {}
+    counter = 1
     for n, f in [("Linearly Separable", "linearly_separable.npy"), ("Linearly Inseparable", "linearly_inseparable.npy")]:
         # Load dataset
-        raise NotImplementedError()
+        X,y_all = load_dataset(f"/Users/elkysandor/Desktop/hujiyr3/IML/IML.HUJI/datasets/{f}")
 
         # Fit Perceptron and record loss in each fit iteration
         losses = []
-        raise NotImplementedError()
-
+        def default_callback(fit: Perceptron, x: np.ndarray, y: int):
+            loss = fit.loss(X,y_all)
+            losses.append(loss)
+        perceptron = Perceptron(callback=default_callback)
+        perceptron.fit(X,y_all)
         # Plot figure of loss as function of fitting iteration
-        raise NotImplementedError()
-
+        fig = go.Figure(go.Scatter(x=[i+1 for i, j in enumerate(losses)], y=losses,mode="lines+markers"))
+        fig.update_layout({"title":f"loss as function of iteration on {n} data",
+                           "xaxis_title":"iteration","yaxis_title":"loss"})
+        fig.write_image(f"/Users/elkysandor/Desktop/hujiyr3/IML/plots_iml/plot_Q3.2.{counter}_ex3.png")
+        counter+=1
 
 def get_ellipse(mu: np.ndarray, cov: np.ndarray):
     """
@@ -103,4 +111,4 @@ def compare_gaussian_classifiers():
 if __name__ == '__main__':
     np.random.seed(0)
     run_perceptron()
-    compare_gaussian_classifiers()
+    # compare_gaussian_classifiers()

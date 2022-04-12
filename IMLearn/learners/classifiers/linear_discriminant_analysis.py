@@ -46,7 +46,20 @@ class LDA(BaseEstimator):
         y : ndarray of shape (n_samples, )
             Responses of input data to fit to
         """
-        raise NotImplementedError()
+        self.classes_, num_per_class= np.unique(y, return_counts=True)
+        nk_dict = dict(zip(self.classes_, num_per_class))
+        ndx = np.argsort(y)
+        idx, pos, class_count = np.unique(y[ndx],
+                                return_index=True,
+                                return_counts=True)
+
+        class_sum = np.add.reduceat(X[ndx], pos, axis=0)
+        self.mu_ = class_sum / class_count[:,None]
+        nomalize_mean = X[ndx]-np.repeat(self.mu_, class_count[:,None], axis=0)
+        self.cov_ = (nomalize_mean@nomalize_mean.T)/y.size
+        self._cov_inv = inv(self.cov_)
+        self.fitted_ = True
+
 
     def _predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -62,8 +75,10 @@ class LDA(BaseEstimator):
         responses : ndarray of shape (n_samples, )
             Predicted responses of given samples
         """
-        raise NotImplementedError()
-
+        bayes_coefs_a = self.mu_@self._cov_inv.T
+        bayes_coefs_b = -0.5*(self.mu_@self._cov_inv@self.mu_.T)
+        val = X@bayes_coefs_a.T
+        return np.argmax(val+bayes_coefs_b, axis=1)
     def likelihood(self, X: np.ndarray) -> np.ndarray:
         """
         Calculate the likelihood of a given data over the estimated model
@@ -82,7 +97,8 @@ class LDA(BaseEstimator):
         if not self.fitted_:
             raise ValueError("Estimator must first be fitted before calling `likelihood` function")
 
-        raise NotImplementedError()
+        def calc_part_of_likelihood(residuals):
+            return residuals.T.dot(inv_cov).dot(residuals)
 
     def _loss(self, X: np.ndarray, y: np.ndarray) -> float:
         """
@@ -102,4 +118,4 @@ class LDA(BaseEstimator):
             Performance under missclassification loss function
         """
         from ...metrics import misclassification_error
-        raise NotImplementedError()
+        return misclassification_error(y,self.predict(X))
