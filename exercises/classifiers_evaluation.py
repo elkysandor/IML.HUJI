@@ -53,7 +53,7 @@ def run_perceptron():
         fig = go.Figure(go.Scatter(x=[i+1 for i, j in enumerate(losses)], y=losses,mode="lines+markers"))
         fig.update_layout({"title":f"loss as function of iteration on {n} data",
                            "xaxis_title":"iteration","yaxis_title":"loss"})
-        fig.write_image(f"/Users/elkysandor/Desktop/hujiyr3/IML/plots_iml/plot_Q3.2.{counter}_ex3.png")
+        fig.write_image(f"/Users/elkysandor/Desktop/hujiyr3/IML/plots_iml/plot_Q3.1.{counter}_ex3.png")
         counter+=1
 
 def get_ellipse(mu: np.ndarray, cov: np.ndarray):
@@ -85,30 +85,50 @@ def compare_gaussian_classifiers():
     """
     Fit both Gaussian Naive Bayes and LDA classifiers on both gaussians1 and gaussians2 datasets
     """
+    symbols = np.array(["circle", "x","star"])
+    models = ["LDA", "GNB"]
     for f in ["gaussian1.npy", "gaussian2.npy"]:
         # Load dataset
-        raise NotImplementedError()
-
+        X,y = load_dataset(f"/Users/elkysandor/Desktop/hujiyr3/IML/IML.HUJI/datasets/{f}")
+        from sklearn.naive_bayes import GaussianNB
         # Fit models and predict over training set
-        raise NotImplementedError()
+        lda = LDA().fit(X,y)
+        nb = GaussianNaiveBayes().fit(X,y)
+        gnb = GaussianNB()
+        gnb.fit(X,y)
+        y_pred=[lda.predict(X),nb.predict(X)]
 
         # Plot a figure with two suplots, showing the Gaussian Naive Bayes predictions on the left and LDA predictions
+
         # on the right. Plot title should specify dataset used and subplot titles should specify algorithm and accuracy
         # Create subplots
         from IMLearn.metrics import accuracy
-        raise NotImplementedError()
+
+        fig = make_subplots(rows=1, cols=2,subplot_titles=[f"{models[i]} classifier with accuracy {round(accuracy(y,m),4)}" for i,m in enumerate(y_pred)])
+        fig.add_trace(
+            go.Scatter(x=X[:,0], y=X[:,1], mode = 'markers',showlegend=False,
+                       marker = dict(color=y_pred[0], symbol=symbols[y],
+                                     colorscale=[[0.0, 'rgb(165,0,38)'], [1.0, 'rgb(49,54,149)']],
+                                     reversescale=True, size = 6,)),
+            row=1, col=1)
+        fig.add_trace(
+            go.Scatter(x=X[:,0], y=X[:,1], mode = 'markers',showlegend=False ,
+                       marker = dict(color=y_pred[1],symbol=symbols[y], colorscale=[[0.0, 'rgb(165,0,38)'], [1.0, 'rgb(49,54,149)']], reversescale=True, size = 6)),
+            row=1, col=2)
+        fig.update_layout(height=600, width=800)
+        fig.write_image(f"/Users/elkysandor/Desktop/hujiyr3/IML/plots_iml/plot_Q3.2.3_ex3{f}.png")
 
         # Add traces for data-points setting symbols and colors
-        raise NotImplementedError()
+        # raise NotImplementedError()
 
         # Add `X` dots specifying fitted Gaussians' means
-        raise NotImplementedError()
+        # raise NotImplementedError()
 
         # Add ellipses depicting the covariances of the fitted Gaussians
-        raise NotImplementedError()
+        # raise NotImplementedError()
 
 
 if __name__ == '__main__':
     np.random.seed(0)
     run_perceptron()
-    # compare_gaussian_classifiers()
+    compare_gaussian_classifiers()
