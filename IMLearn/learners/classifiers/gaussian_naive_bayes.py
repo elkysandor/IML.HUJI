@@ -47,12 +47,7 @@ class GaussianNaiveBayes(BaseEstimator):
         class_sum = np.add.reduceat(X[ndx], pos, axis=0)
         self.pi_ = class_count[:,None]/X.shape[0]
         self.mu_ = class_sum / class_count[:,None]
-        self.vars_ = np.zeros(self.mu_.shape)
-        for i in self.classes_:
-            var = ((X[y==i]-self.mu_[i])**2).sum(axis=0)
-            self.vars_[i,:] = var/class_count[i]
         nomalize_mean = (X[ndx]-np.repeat(self.mu_, class_count, axis=0))**2
-        print(np.add.reduceat(nomalize_mean, pos, axis=0))
         nomalize_mean2 = (np.add.reduceat(nomalize_mean, pos, axis=0))
         self.vars_ = nomalize_mean2/class_count[:,None]
     def _predict(self, X: np.ndarray) -> np.ndarray:
@@ -74,10 +69,9 @@ class GaussianNaiveBayes(BaseEstimator):
             resid = (X - self.mu_[i])**2
             sigma = self.vars_[i]
             def calc_post_dist(row):
-                return -0.5*(np.log(2*np.pi)+np.log(sigma)+(1/sigma)*row)+np.log(self.pi_[i])
+                return -0.5*(np.log(2*np.pi*sigma)+(row/sigma))
             post_per_feature = np.apply_along_axis(calc_post_dist, 1, resid)
-            post_dist_per_k[:,i] = post_per_feature.sum(axis=1)
-        print(post_dist_per_k.argmax(axis=1))
+            post_dist_per_k[:,i] = (post_per_feature.sum(axis=1)+np.log(self.pi_[i]))
         return post_dist_per_k.argmax(axis=1)
 
 

@@ -1,3 +1,5 @@
+import numpy as np
+
 from IMLearn.learners.classifiers import Perceptron, LDA, GaussianNaiveBayes
 from typing import Tuple
 from utils import *
@@ -85,7 +87,7 @@ def compare_gaussian_classifiers():
     """
     Fit both Gaussian Naive Bayes and LDA classifiers on both gaussians1 and gaussians2 datasets
     """
-    symbols = np.array(["circle", "x","star"])
+    symbols = np.array(["circle", "diamond","star"])
     models = ["LDA", "GNB"]
     for f in ["gaussian1.npy", "gaussian2.npy"]:
         # Load dataset
@@ -116,16 +118,27 @@ def compare_gaussian_classifiers():
                        marker = dict(color=y_pred[1],symbol=symbols[y], colorscale=[[0.0, 'rgb(165,0,38)'], [1.0, 'rgb(49,54,149)']], reversescale=True, size = 6)),
             row=1, col=2)
         fig.update_layout(height=600, width=800)
-        fig.write_image(f"/Users/elkysandor/Desktop/hujiyr3/IML/plots_iml/plot_Q3.2.3_ex3{f}.png")
 
         # Add traces for data-points setting symbols and colors
         # raise NotImplementedError()
 
         # Add `X` dots specifying fitted Gaussians' means
-        # raise NotImplementedError()
+        fig.add_trace(go.Scatter(x=lda.mu_[:,0],y=lda.mu_[:,1],mode="markers",
+                      marker = dict(color="black",symbol="x", size = 10)),row=1, col=1)
+
+        fig.add_trace(go.Scatter(x=nb.mu_[:,0],y=nb.mu_[:,1],mode="markers",
+                      marker = dict(color="black",symbol="x", size = 10)),row=1, col=2)
 
         # Add ellipses depicting the covariances of the fitted Gaussians
-        # raise NotImplementedError()
+        fig.add_traces([get_ellipse(nb.mu_[0,:],np.diag(nb.vars_[0,:])),
+                       get_ellipse(nb.mu_[1,:],np.diag(nb.vars_[1,:])),
+                       get_ellipse(nb.mu_[2,:],np.diag(nb.vars_[2,:]))],rows=1, cols=2)
+
+        fig.add_traces([get_ellipse(lda.mu_[0,:],lda.cov_),
+                       get_ellipse(lda.mu_[1,:],lda.cov_),
+                       get_ellipse(lda.mu_[2,:],lda.cov_)],rows=1, cols=1)
+
+        fig.write_image(f"/Users/elkysandor/Desktop/hujiyr3/IML/plots_iml/plot_Q3.2.3_ex3{f}.png")
 
 
 if __name__ == '__main__':

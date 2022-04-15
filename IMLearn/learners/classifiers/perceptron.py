@@ -101,6 +101,8 @@ class Perceptron(BaseEstimator):
         responses : ndarray of shape (n_samples, )
             Predicted responses of given samples
         """
+        if (self.coefs_==0).all():
+            return np.ones(X.shape[0])*-1
         if self.coefs_.size > X.shape[1]:
             return np.sign((X @ self.coefs_[1:])+self.coefs_[0])
         return np.sign(X @ self.coefs_)
