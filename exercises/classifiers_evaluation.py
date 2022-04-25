@@ -80,7 +80,7 @@ def get_ellipse(mu: np.ndarray, cov: np.ndarray):
     xs = (l1 * np.cos(theta) * np.cos(t)) - (l2 * np.sin(theta) * np.sin(t))
     ys = (l1 * np.sin(theta) * np.cos(t)) + (l2 * np.cos(theta) * np.sin(t))
 
-    return go.Scatter(x=mu[0] + xs, y=mu[1] + ys, mode="lines", marker_color="black")
+    return go.Scatter(x=mu[0] + xs, y=mu[1] + ys, mode="lines", marker_color="black",showlegend=False,)
 
 
 def compare_gaussian_classifiers():
@@ -117,16 +117,16 @@ def compare_gaussian_classifiers():
             go.Scatter(x=X[:,0], y=X[:,1], mode = 'markers',showlegend=False ,
                        marker = dict(color=y_pred[1],symbol=symbols[y], colorscale=[[0.0, 'rgb(165,0,38)'], [1.0, 'rgb(49,54,149)']], reversescale=True, size = 6)),
             row=1, col=2)
-        fig.update_layout(height=600, width=800)
+        fig.update_layout(title=f"{f[:-3]}",height=600, width=800)
 
         # Add traces for data-points setting symbols and colors
         # raise NotImplementedError()
 
         # Add `X` dots specifying fitted Gaussians' means
-        fig.add_trace(go.Scatter(x=lda.mu_[:,0],y=lda.mu_[:,1],mode="markers",
+        fig.add_trace(go.Scatter(x=lda.mu_[:,0],y=lda.mu_[:,1],mode="markers",showlegend=False,
                       marker = dict(color="black",symbol="x", size = 10)),row=1, col=1)
 
-        fig.add_trace(go.Scatter(x=nb.mu_[:,0],y=nb.mu_[:,1],mode="markers",
+        fig.add_trace(go.Scatter(x=nb.mu_[:,0],y=nb.mu_[:,1],mode="markers",showlegend=False,
                       marker = dict(color="black",symbol="x", size = 10)),row=1, col=2)
 
         # Add ellipses depicting the covariances of the fitted Gaussians
