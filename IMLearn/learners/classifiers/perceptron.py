@@ -84,6 +84,7 @@ class Perceptron(BaseEstimator):
                 self.callback_(self ,X[idx, :],y[idx])
                 self.coefs_ = self.coefs_ + y[idx]*X[idx, :]
             else:
+                print(iters)
                 break
 
 

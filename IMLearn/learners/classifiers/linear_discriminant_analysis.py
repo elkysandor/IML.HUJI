@@ -97,7 +97,7 @@ class LDA(BaseEstimator):
             raise ValueError("Estimator must first be fitted before calling `likelihood` function")
 
         def calc_part_of_likelihood(residuals):
-            return residuals.T.dot(inv_cov).dot(residuals)
+            return residuals.T.dot(self._cov_inv).dot(residuals)
 
     def _loss(self, X: np.ndarray, y: np.ndarray) -> float:
         """
