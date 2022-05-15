@@ -39,7 +39,15 @@ class DecisionStump(BaseEstimator):
         y : ndarray of shape (n_samples, )
             Responses of input data to fit to
         """
-        raise NotImplementedError()
+        counter1 = np.inf
+        for sign,col in product([-1,1],range(X.shape[1])):
+            trr,trr_err = self._find_threshold(X[:,col],y,sign)
+            if trr_err < counter1:
+                self.threshold_, self.j_, self.sign_ = trr, col, sign
+                counter1 = trr_err
+
+
+
 
     def _predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -63,7 +71,8 @@ class DecisionStump(BaseEstimator):
         Feature values strictly below threshold are predicted as `-sign` whereas values which equal
         to or above the threshold are predicted as `sign`
         """
-        raise NotImplementedError()
+        y_hat = self.sign_ * np.sign((X[:,self.j_] >= self.threshold_)-0.5)
+        return y_hat.astype(int)
 
     def _find_threshold(self, values: np.ndarray, labels: np.ndarray, sign: int) -> Tuple[float, float]:
         """
@@ -95,7 +104,22 @@ class DecisionStump(BaseEstimator):
         For every tested threshold, values strictly below threshold are predicted as `-sign` whereas values
         which equal to or above the threshold are predicted as `sign`
         """
-        raise NotImplementedError()
+        # find_t = np.tile(values,(values.size,1))
+        # new_labels = values[:,None] <= find_t
+        # if sign == -1:
+        #     new_labels = ~new_labels
+        # new_labels2 = np.sign(new_labels.astype(int)-0.5).astype(int)
+        # Misclassificaiton_vec = ((new_labels2 != np.sign(labels)) * np.abs(labels)).mean(axis=1)
+        # return values[Misclassificaiton_vec.argmin()],  Misclassificaiton_vec.min()
+        sample_size = values.size
+        ord_idx = np.argsort(values)
+        cumsum = np.cumsum(labels[ord_idx] * sign)
+        shifted_cs = np.zeros(sample_size)
+        shifted_cs[1:] = cumsum[:-1]
+        sim = -(np.full(sample_size,cumsum[-1]) - 2*shifted_cs)
+        trr_idx = np.argmin(sim)
+        return values[ord_idx][trr_idx], sim[trr_idx]
+
 
     def _loss(self, X: np.ndarray, y: np.ndarray) -> float:
         """
@@ -114,4 +138,4 @@ class DecisionStump(BaseEstimator):
         loss : float
             Performance under missclassification loss function
         """
-        raise NotImplementedError()
+        return (self._predict(X) != np.sign(y)).mean()
