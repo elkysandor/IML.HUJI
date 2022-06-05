@@ -30,12 +30,13 @@ def select_polynomial_degree(n_samples: int = 100, noise: float = 5):
     f = lambda x: (x+3)*(x+2)*(x+1)*(x-1)*(x-2)
     random_x = np.random.uniform(-1.2,2,n_samples)
     fuss = np.random.normal(0,noise,n_samples)
-    dat = f(random_x)+fuss
-    train_X, train_y, test_X, test_y = split_train_test(pd.DataFrame(random_x), pd.Series(dat),2/3)
+    dat = f(random_x)
+    noise_dat = f(random_x)+fuss
+    train_X, train_y, test_X, test_y = split_train_test(pd.DataFrame(random_x), pd.Series(noise_dat),2/3)
     fig = go.Figure()
-    fig.add_traces([go.Scatter(x=random_x,y=train_y,mode="markers",marker={"color":"green"}),
-                    go.Scatter(x=train_X[0],y=train_y,mode="markers",marker={"color":"blue"}),
-                    go.Scatter(x=test_X[0],y=test_y,mode="markers",marker={"color":"red"})])
+    fig.add_traces([go.Scatter(x=random_x,y=dat,mode="markers",marker={"color":"green"},name="oracle"),
+                    go.Scatter(x=train_X[0],y=train_y,mode="markers",marker={"color":"blue"},name="train"),
+                    go.Scatter(x=test_X[0],y=test_y,mode="markers",marker={"color":"red"},name="test")])
     fig.write_image(f"/Users/elkysandor/Desktop/hujiyr3/IML/plots_iml/plot_Q2.1.1.{noise}_{n_samples}_ex5.png")
 
 
@@ -68,7 +69,7 @@ def select_polynomial_degree(n_samples: int = 100, noise: float = 5):
     final_ploy = PolynomialFitting(k_hat)
     final_ploy.fit(train_X.values,train_y.values)
     y_pred = final_ploy.predict(test_X.values)
-    print(f" k is {k_hat} and error is {mean_square_error(test_y.values,y_pred)}")
+    print(f" k is {k_hat} and error is {round(mean_square_error(test_y.values,y_pred),2)}")
 
 
 def select_regularization_parameter(n_samples: int = 50, n_evaluations: int = 500):
@@ -128,7 +129,7 @@ def select_regularization_parameter(n_samples: int = 50, n_evaluations: int = 50
     print(f" the ridge error is {rg_error} and lasso error is {ls_error} and ols error is {ols_error}")
 if __name__ == '__main__':
     np.random.seed(0)
-    # select_polynomial_degree()
-    # select_polynomial_degree(noise=0)
-    # select_polynomial_degree(n_samples=1500,noise=10)
+    select_polynomial_degree()
+    select_polynomial_degree(noise=0)
+    select_polynomial_degree(n_samples=1500,noise=10)
     select_regularization_parameter()
