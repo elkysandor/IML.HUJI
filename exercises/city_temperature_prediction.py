@@ -22,7 +22,7 @@ def load_data(filename: str) -> pd.DataFrame:
     Design matrix and response vector (Temp)
     """
     daily_temp = pd.read_csv(filename,parse_dates={"date": [2]})
-    daily_temp["DayOfYear"] = daily_temp.date.dt.day_of_year
+    daily_temp["DayOfYear"] = daily_temp.date.dt.x
     daily_temp = daily_temp.loc[daily_temp.Temp > -20]
     return daily_temp
 
