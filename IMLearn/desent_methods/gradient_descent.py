@@ -119,4 +119,21 @@ class GradientDescent:
                 Euclidean norm of w^(t)-w^(t-1)
 
         """
-        raise NotImplementedError()
+        iter = 0
+        sum_of_w = 0
+        pointer = 0
+        while iter <self.max_iter_:
+            iter += 1
+            pointer = f.weights - self.learning_rate_.lr_step(t=iter) * f.compute_jacobian(X=X, y=y)
+            delta = np.sqrt(((pointer - f.weights)**2).sum())
+            sum_of_w += pointer
+            f.weights = pointer
+            if delta < self.tol_:
+                break
+            if X is None:
+                self.callback_(self, f.weights, f.compute_output(),
+                            f.compute_jacobian(), iter, self.learning_rate_.lr_step(t=iter), delta)
+        return f.weights
+
+
+
